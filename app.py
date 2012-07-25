@@ -3,7 +3,7 @@ from auth import GithubAuth
 from flaskext.seasurf import SeaSurf
 from models import User, Hug
 import os
-from flask import Flask, g, render_template, request, abort
+from flask import Flask, g, render_template, request, abort, redirect, url_for
 from flask_heroku import Heroku
 from mongoengine import connect
 from raven.contrib.flask import Sentry
@@ -12,6 +12,7 @@ from raven.contrib.flask import Sentry
 #
 # Setup
 #
+import requests
 
 app = Flask(__name__)
 app.secret_key = os.environ['SECRET']
@@ -22,12 +23,12 @@ connect(app.config['MONGODB_DB'], host=app.config['MONGODB_HOST'], port=app.conf
 github = GithubAuth(
     client_id=os.environ['GITHUB_CLIENT_ID'],
     client_secret=os.environ['GITHUB_SECRET'],
-    session_key='github',
-    redirect_url_name='me',
+    session_key_prefix='github-',
     model=User,
     username_field='name',
     access_token_field='access_token',
     admin_field='is_admin',
+    login_view_name='github_login',
 )
 csrf = SeaSurf(app)
 
@@ -70,24 +71,51 @@ def index():
     }
     return render_template('index.html', **stats)
 
+# Profile
+
 @app.route('/me/')
 @github.login_required
 def me():
     return render_template('me.html', user=g.user)
 
+
 @app.route('/me/', methods=['POST'])
 @github.login_required
-def hug():
-    if not g.user.can_hug():
-        abort(400)
+def prepare_to_hug():
     try:
-        receiver_name = request.form['receiver']
-        network = 'github' # todo: make dynamic
+        return redirect(url_for('confirm_hug', network='github', username=request.form['receiver']))
     except KeyError:
         abort(400)
-    receiver,_ = User.objects.get_or_create(name=receiver_name, network=network)
+
+# Two step hug
+
+@app.route('/hug/<network>/<username>/')
+@github.login_required
+def confirm_hug(network, username):
+    if network != 'github':
+        abort(400)
+    if not g.user.can_hug():
+        abort(400)
+    response = requests.get('https://api.github.com/users/%s' % username)
+    if not response.ok:
+        return redirect(url_for('me'))
+    return render_template('confirm_hug.html', user=response.json)
+
+@app.route('/hug/<network>/<username>/', methods=['POST'])
+@github.login_required
+def hug(network, username):
+    if network != 'github':
+        abort(400)
+    if not g.user.can_hug():
+        abort(400)
+    if request.form.get('confirm', None) != 'confirm':
+        abort(400)
+    receiver,_ = User.objects.get_or_create(name=username, network=network)
     g.user.hug(receiver)
-    return me()
+    return redirect(url_for('me'))
+
+
+# User profile
 
 @app.route('/user/<network>/<username>/')
 def user(network, username):
@@ -96,6 +124,9 @@ def user(network, username):
     except User.DoesNotExist:
         abort(404)
     return render_template('user.html', user=user)
+
+
+# Run this stuff!
 
 if __name__ == '__main__':
     port = os.environ.get('PORT', None) or 5000

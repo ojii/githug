@@ -2,7 +2,7 @@
 <h2>Give hugs!</h2>
 {% if user.can_hug() %}
     <p>Hug someone!</p>
-    <form method="post" action="">
+    <form method="post" action="{{ url_for('prepare_to_hug') }}">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <input type="text" name="receiver" />
         <button type="submit">Hug!</button>
