@@ -24,5 +24,9 @@
     last week (<strong>{{ hugs_last_week }}</strong>).
 </p>
 <p>
-    Login with <a href="{{ url_for('github_login') }}">GitHub</a> and start hugging!.
+    {% if g.user %}
+        You're logged in, check your hugs or hug someone on your <a href="{{ url_for('me') }}">profile</a>!
+    {% else %}
+        Login with <a href="{{ url_for('github_login') }}">GitHub</a> and start hugging!.
+    {% endif %}
 </p>
