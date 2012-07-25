@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import urlparse
 from auth import GithubAuth
 from flaskext.seasurf import SeaSurf
 from models import User, Hug
@@ -56,6 +57,12 @@ def teardown_request(exception):
         del g.user
     except AttributeError:
         pass
+
+@app.context_processor
+def reverse_filter():
+    return {
+        'urljoin': lambda *args: urlparse.urljoin(*args),
+    }
 
 #
 # Views
