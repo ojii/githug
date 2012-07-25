@@ -1,7 +1,12 @@
 <h1>Stats</h1>
 <p>
     In total, <strong>{{ total_hugs }}</strong> have been given. On average, each user gave <strong>{{ average_hugs_given }}</strong>
-    and received <strong>{{ average_hugs_received }}</strong> hugs. This week, <strong>{{ hugs_this_week }}</strong> were
+    and received <strong>{{ average_hugs_received }}</strong> hugs. This week, <strong>{{ hugs_this_week }}</strong>
+    {% if hugs_this_week == 1 %}
+        hug was
+    {% else %}
+        hugs were
+    {% endif %}
     given, that is
     {% if hugs_this_week > hugs_last_week %}
         <strong>{{ hugs_this_week - hugs_last_week }} more</strong> than
