@@ -62,6 +62,7 @@ def teardown_request(exception):
 def reverse_filter():
     return {
         'urljoin': lambda *args: urlparse.urljoin(*args),
+        'ANALYTICS_ID': os.environ.get('ANALYTICS_ID', None)
     }
 
 #

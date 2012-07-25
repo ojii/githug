@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
 <h1>GitHug</h1>
 <p>
     GitHug is a little like <a href="https://www.gittip.com/">GitTip</a>, but without credit cards or money. You get one hug per week to give to any user on
@@ -31,3 +33,4 @@
     {% endif %}
     last week (<strong>{{ hugs_last_week }}</strong>).
 </p>
+{% endblock %}

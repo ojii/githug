@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
 <h1>Confirm</h1>
 <p>
     Are you sure you want to hug {% if user.name %}<strong>{{ user.name }}</strong> aka {% endif %}<strong><a href="{{ user.html_url }}">{{ user.login }}</a></strong>? (You only have one hug per week!)
@@ -10,3 +12,4 @@
         <button type="submit">Yes, let's hug!</button>
     </form>
 </p>
+{% endblock %}

@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
 <h1>Welcome {{ user }}</h1>
 <img src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
 <h2>Give hugs!</h2>
@@ -14,7 +16,8 @@
     <a href="https://twitter.com/share" class="twitter-share-button" data-text="I just hugged {{ hug.hugged }} on githug!" data-count="none" data-hashtags="githug">Tweet</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 {% endif %}
-{% include 'user_stats.html' %}
+{% include 'inc/user_stats.html' %}
 <p>
     You can ask people to hug you by sending them this link: {{ urljoin(request.host_url, url_for('hug', username=user.name, network='github')) }}
 </p>
+{% endblock %}
