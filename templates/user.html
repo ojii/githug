@@ -1,2 +1,5 @@
 <h1>{{ user }}</h1>
+{% if g.user and g.user.can_hug() %}
+<p><a href="{{ url_for('hug', username=user.name, network='github') }}">Hug!</a></p>
+{% endif %}
 {% include 'user_stats.html' %}
