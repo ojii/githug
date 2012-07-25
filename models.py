@@ -21,10 +21,10 @@ class UserQuerySet(QuerySet):
         return self.sum('hugs_received')
 
     def average_hugs_given(self):
-        return self.average('hugs_given')
+        return self.filter(hugs_given__gt=0).average('hugs_given')
 
     def average_hugs_received(self):
-        return self.average('hugs_received')
+        return self.filter(hugs_received__gt=0).average('hugs_received')
 
 
 class User(Document):
