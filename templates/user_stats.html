@@ -1,7 +1,7 @@
 <h2>Hugs received this week from</h2>
 <ul>
     {% for hug in user.get_this_week_hugged_by().select_related() %}
-    <li><a href="{{ hug.hugger.url }}"><img src="{{ hug.hugger.avatar_url }}" alt="{{ hug.hugger }}" /></a></li>
+    <li><a href="{{ hug.hugger.url }}"><img src="{{ hug.hugger.avatar_url }}" alt="Avatar of {{ hug.hugger }}" title="{{ hug.hugger }}" /></a></li>
     {% else %}
     <li>Nobody :(</li>
     {% endfor %}
