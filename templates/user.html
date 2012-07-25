@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>{{ user }}</h1>
-{% if g.user and g.user.can_hug() %}
+{% if not g.user or g.user.can_hug() %}
 <p><a href="{{ url_for('hug', username=user.name, network='github') }}">Hug!</a></p>
 {% endif %}
 {% include 'inc/user_stats.html' %}
