@@ -5,9 +5,9 @@
     by <a href="https://github.com/econchick">Lynn Root</a>.
 </p>
 <p>
-    In total, <strong>{{ total_hugs }}</strong> have been given. On average, each user that gave hugs gave <strong>{{ average_hugs_given }}</strong>
-    and each user that received hugs received <strong>{{ average_hugs_received }}</strong> hugs.
-    This week, <strong>{{ hugs_this_week }}</strong>
+    In total, <strong>{{ total_hugs }}</strong> have been given. On average, each user that gave hugs gave <strong>{{ average_hugs_given|int() }}</strong>
+    and each user that received hugs received <strong>{{ average_hugs_received|int() }}</strong> hugs.
+    This week, <strong>{{ hugs_this_week|int() }}</strong>
     {% if hugs_this_week == 1 %}
         hug was
     {% else %}
