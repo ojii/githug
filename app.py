@@ -105,7 +105,7 @@ def confirm_hug(network, username):
     if network != 'github':
         abort(400)
     if not g.user.can_hug():
-        abort(400)
+        return render_template('already_hugged.html')
     response = requests.get('https://api.github.com/users/%s' % username)
     if not response.ok:
         return redirect(url_for('me'))
@@ -117,7 +117,7 @@ def hug(network, username):
     if network != 'github':
         abort(400)
     if not g.user.can_hug():
-        abort(400)
+        return render_template('already_hugged.html')
     if request.form.get('confirm', None) != 'confirm':
         abort(400)
     receiver,_ = User.objects.get_or_create(name=username, network=network)
