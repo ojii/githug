@@ -1,0 +1,14 @@
+<h1>Welcome {{ g.user }}</h1>
+<h2>Give hugs!</h2>
+{% if user.can_hug() %}
+    <p>Hug someone!</p>
+    <form method="post" action="">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="receiver" />
+        <button type="submit">Hug!</button>
+    </form>
+{% else %}
+    {% set hug = user.get_this_week_hugged() %}
+    <p>You hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> this week!</p>
+{% endif %}
+{% include 'user_stats.html' %}

@@ -1,0 +1,17 @@
+<h1>Stats</h1>
+<p>
+    In total, <strong>{{ total_hugs }}</strong> have been given. On average, each user gave <strong>{{ average_hugs_given }}</strong>
+    and received <strong>{{ average_hugs_received }}</strong> hugs. This week, <strong>{{ hugs_this_week }}</strong> were
+    given, that is
+    {% if hugs_this_week > hugs_last_week %}
+        <strong>{{ hugs_this_week - hugs_last_week }} more</strong> than
+    {% elif hugs_this_week == hugs_last_week %}
+        <strong>the same as</strong>
+    {% else %}
+        <strong>{{ hugs_last_week - hugs_this_week }} less</strong> than
+    {% endif %}
+    last week (<strong>{{ hugs_last_week }}</strong>).
+</p>
+<p>
+    Login with <a href="{{ url_for('github_login') }}">GitHub</a>.
+</p>
