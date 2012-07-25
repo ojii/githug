@@ -10,6 +10,16 @@ from raven.contrib.flask import Sentry
 
 
 #
+# Custom GithubAuth, we'll leave auth.py as clean as possible so I can continue to copy/paste it around
+#
+
+class GitHugAuth(GithubAuth):
+    def build_user(self, data):
+        user = super(GitHugAuth, self).build_user(data)
+        user.avatar_url = data['user']['avatar_url']
+        return user
+
+#
 # Setup
 #
 import requests
@@ -20,7 +30,7 @@ heroku = Heroku(app)
 if app.config.get('SENTRY_DSN'):
     sentry = Sentry(app)
 connect(app.config['MONGODB_DB'], host=app.config['MONGODB_HOST'], port=app.config['MONGODB_PORT'], username=app.config['MONGODB_USER'], password=app.config['MONGODB_PASSWORD'])
-github = GithubAuth(
+github = GitHugAuth(
     client_id=os.environ['GITHUB_CLIENT_ID'],
     client_secret=os.environ['GITHUB_SECRET'],
     session_key_prefix='github-',

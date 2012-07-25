@@ -73,14 +73,18 @@ class GithubAuth(object):
             abort(400)
         username = data['user']['login']
         session[self.username_session_key] = username
+        user = self.build_user(data)
+        user.save()
+        url = session.pop(self.url_session_key, '/')
+        return redirect(url)
+
+    def build_user(self, data):
         try:
             user = self.model.objects.get(**{self.username_field: data['user']['login']})
         except self.model.DoesNotExist:
             user = self.model(**{self.username_field: data['user']['login']})
         setattr(user, self.access_token_field, data['access_token'])
-        user.save()
-        url = session.pop(self.url_session_key, '/')
-        return redirect(url)
+        return user
 
     def login_required(self, view):
         def _decorate(*args, **kwargs):
@@ -110,6 +114,5 @@ class GithubAuth(object):
         try:
             user = self.model.objects.get(**{self.username_field: username})
         except self.model.DoesNotExist:
-            user = self.model(**{self.username_field: username})
-            user.save()
+            return None
         return user

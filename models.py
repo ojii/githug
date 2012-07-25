@@ -34,6 +34,7 @@ class User(Document):
     is_admin = fields.BooleanField(default=False)
     hugs_received = fields.IntField(default=0)
     hugs_given = fields.IntField(default=0)
+    avatar_url = fields.StringField(required=False)
 
     meta = {'queryset_class': UserQuerySet}
 
