@@ -19,7 +19,7 @@
         <p>{{ user }} hasn't hugged anyone today.</p>
     {% else %}
     {% set hug = user.get_today_hugged() %}
-    <p class="clearfix">{{ user }} hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> today! <img class="avatar pull-right" src="{{ hug.hugged.avatar_url }}" alt="Avatar of {{ hug.hugged }}" /></p>
+    <p class="clearfix">{{ user }} hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> today! <a href="{{ hug.hugged.url }}"><img class="avatar pull-right" src="{{ hug.hugged.avatar_url }}" alt="Avatar of {{ hug.hugged }}" /></a></p>
     {% endif %}
 </div>
 {% include 'inc/user_stats.html' %}
