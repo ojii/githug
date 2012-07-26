@@ -109,7 +109,7 @@ class HugQuerySet(QuerySet):
 
 
 class Hug(Document):
-    hugger = fields.ReferenceField(User, unique_with='week')
+    hugger = fields.ReferenceField(User, unique_with=['year', 'week', 'day'])
     hugged = fields.ReferenceField(User)
     created = fields.DateTimeField(default=datetime.datetime.now)
     week = fields.IntField(default=get_week_number)
