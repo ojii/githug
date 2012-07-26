@@ -30,9 +30,10 @@ class GithubAuth(object):
         self.access_token_url = 'https://github.com/login/oauth/access_token'
         self.login_url = 'https://github.com/login/oauth/authorize'
         self.user_url = 'https://api.github.com/user'
+        self.requests_session = requests.session()
 
     def access_token_to_data(self, access_token):
-        response = requests.get(self.user_url, params={'access_token': access_token})
+        response = self.requests_session.get(self.user_url, params={'access_token': access_token})
         return {'user': json.loads(response.content), 'access_token': access_token}
 
     def code_to_access_token(self, code):
@@ -41,7 +42,7 @@ class GithubAuth(object):
             'client_id': self.client_id,
             'client_secret': self.client_secret,
             }
-        response = requests.post(self.access_token_url, data=data)
+        response = self.requests_session.post(self.access_token_url, data=data)
         return urlparse.parse_qs(response.content)['access_token'][0]
 
     def get_data_from_code(self, code):

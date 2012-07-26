@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
+from gevent import monkey; monkey.patch_all()
+from geventwebsocket.handler import WebSocketHandler
+from gevent.pywsgi import WSGIServer
+
 import urlparse
-from auth import GithubAuth
-from flaskext.seasurf import SeaSurf
-from models import User, Hug
 import os
-from flask import Flask, g, render_template, request, abort, redirect, url_for
+import json
+
+from flask import Flask, g, render_template, request, abort, redirect, url_for, session
 from flask_heroku import Heroku
+from flaskext.seasurf import SeaSurf
 from mongoengine import connect
 from raven.contrib.flask import Sentry
+from redis import from_url
+
+from auth import GithubAuth
+from models import User, Hug
 
 
 #
@@ -42,6 +50,8 @@ github = GitHugAuth(
     login_view_name='github_login',
 )
 csrf = SeaSurf(app)
+redis = from_url(os.environ['REDISTOGO_URL'])
+requests_session = requests.session()
 
 #
 # Helpers
@@ -114,9 +124,10 @@ def confirm_hug(network, username):
         abort(400)
     if not g.user.can_hug():
         return render_template('already_hugged.html')
-    response = requests.get('https://api.github.com/users/%s' % username)
+    response = requests_session.get('https://api.github.com/users/%s' % username)
     if not response.ok:
         return redirect(url_for('me'))
+    session['avatar-url'] = response.json['avatar_url']
     return render_template('confirm_hug.html', user=response.json)
 
 @app.route('/hug/<network>/<username>/', methods=['POST'])
@@ -124,12 +135,16 @@ def confirm_hug(network, username):
 def hug(network, username):
     if network != 'github':
         abort(400)
+    if 'avatar-url' not in session:
+        abort(400)
     if not g.user.can_hug():
         return render_template('already_hugged.html')
     if request.form.get('confirm', None) != 'confirm':
         abort(400)
-    receiver,_ = User.objects.get_or_create(name=username, network=network)
-    g.user.hug(receiver)
+    receiver,_ = User.objects.get_or_create(name=username, network=network, avatar_url=session['avatar-url'])
+    del session['avatar-url']
+    hug = g.user.hug(receiver)
+    redis.publish('hug', json.dumps(hug.to_dict()))
     return redirect(url_for('me'))
 
 
@@ -143,6 +158,25 @@ def user(network, username):
         abort(404)
     return render_template('user.html', user=user)
 
+# API
+
+
+@app.route('/api/')
+def api():
+    if request.environ.get('wsgi.websocket'):
+        web_socket = request.environ['wsgi.websocket']
+        pubsub = redis.pubsub()
+        pubsub.subscribe('hug')
+        try:
+            for obj in pubsub.listen():
+                if obj['type'] == 'message':
+                    web_socket.send(obj['data'])
+        except Exception:
+            web_socket.close()
+            raise
+    else:
+        return render_template('api_docs.html')
+
 
 # Run this stuff!
 
@@ -150,6 +184,6 @@ if __name__ == '__main__':
     port = os.environ.get('PORT', None) or 5000
     app.local = os.environ.get('LOCAL', None) is not None
     if app.local:
-        app.run(debug=True)
-    else:
-        app.run(port=int(port), host='0.0.0.0')
+        app.debug = True
+    http_server = WSGIServer(('0.0.0.0', int(port)), app, handler_class=WebSocketHandler)
+    http_server.serve_forever()

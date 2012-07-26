@@ -1,22 +1,51 @@
-{% block content %}
-{% endblock %}
-<p>
-    This site is not affiliated with GitHub in any way. It was written by <a href="https://github.com/ojii">Jonas Obrist</a>
-    using <a href="http://flask.pocoo.org">Flask</a> on <a href="http://www.heroku.com">Heroku</a>. If you like the idea,
-    why not <a href="http://githug.herokuapp.com/hug/github/ojii/">hug</a> or <a href="https://www.gittip.com/ojii/">tip</a> me?
-</p>
-{% if ANALYTICS_ID %}
-<script type="text/javascript">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>GitHug - free & open source gratitude</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', '{{ ANALYTICS_ID }}']);
-    _gaq.push(['_trackPageview']);
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+</head>
 
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
+<body>
 
-</script>
-{% endif %}
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/">GitHug</a>
+            <div class="btn-group pull-right">
+                {% if g.user %}
+                    <a class="btn" href="{{ url_for('me') }}"><i class="icon-user"></i> {{ g.user }}</a>
+                {% else %}
+                <a class="btn-auth btn-github" href="{{ url_for('github_login') }}">
+                    Log in with <b>GitHub</b>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    {% block content %}
+    {% endblock %}
+    <footer>
+        This site is not affiliated with GitHub in any way. It was written by <a href="https://github.com/ojii">Jonas Obrist</a>
+        using <a href="http://flask.pocoo.org">Flask</a> on <a href="http://www.heroku.com">Heroku</a>. If you like the idea,
+        why not <a href="http://githug.herokuapp.com/hug/github/ojii/">hug</a> or <a href="https://www.gittip.com/ojii/">tip</a> me?
+    </footer>
+</div>
+{% if ANALYTICS_ID %}<script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setAccount', '{{ ANALYTICS_ID }}']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>{% endif %}
+{% block js %}{% endblock %}
+</body>
+</html>

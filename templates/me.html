@@ -1,20 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Welcome {{ user }}</h1>
-<img src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
-<h2>Give hugs!</h2>
+<div class="row">
+    <div class="span4">
+        <h1>Welcome {{ user }}</h1>
+    </div>
+    <div class="span4 offset4">
+        <img class="avatar pull-right" src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
+    </div>
+</div>
+<div class="row">
+    <div class="span12">
+        <h2>Give hugs!</h2>
+    </div>
+</div>
 {% if user.can_hug() %}
-    <p>Hug someone!</p>
-    <form method="post" action="{{ url_for('prepare_to_hug') }}">
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-        <input type="text" name="receiver" />
-        <button type="submit">Hug!</button>
+    <form method="post" action="{{ url_for('prepare_to_hug') }}" class="form-horizontal">
+        <fieldset>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <div class="control-group">
+                <label class="control-label" for="receiver">Hug someone!</label>
+                <div class="controls">
+                    <div class="input-append">
+                        <input class="span4" name="receiver" id="receiver" type="text" placeholder="GitHub username" /><button class="btn" type="submit">Hug!</button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
     </form>
 {% else %}
-    {% set hug = user.get_this_week_hugged() %}
-    <p>You hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> this week!</p>
-    <a href="https://twitter.com/share" class="twitter-share-button" data-text="I just hugged {{ hug.hugged }} on githug!" data-count="none" data-hashtags="githug">Tweet</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <div class="well">
+        {% set hug = user.get_this_week_hugged() %}
+        <p class="clearfix">You hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> this week! <img class="avatar pull-right" src="{{ hug.hugged.avatar_url }}" alt="Avatar of {{ hug.hugged }}" /></p>
+    </div>
 {% endif %}
 {% include 'inc/user_stats.html' %}
 <p>

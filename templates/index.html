@@ -1,36 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>GitHug</h1>
-<p>
-    GitHug is a little like <a href="https://www.gittip.com/">GitTip</a>, but without credit cards or money. You get one hug per week to give to any user on
-    <a href="https://github.com">GitHub</a> to show your appreciation. It was inspired by a <a href="https://twitter.com/roguelynn/status/227848062842859520">typo</a>
-    by <a href="https://github.com/econchick">Lynn Root</a>.
-</p>
-<p>
-    {% if g.user %}
-    You're logged in, check your hugs or hug someone on your <a href="{{ url_for('me') }}">profile</a>!
-    {% else %}
-    Login with <a href="{{ url_for('github_login') }}">GitHub</a> and start hugging!.
-    {% endif %}
-</p>
-<h2>Stats</h2>
-<p>
-    In total, <strong>{{ total_hugs|int() }}</strong> have been given. On average, each user that gave hugs gave <strong>{{ average_hugs_given|int() }}</strong>
-    and each user that received hugs received <strong>{{ average_hugs_received|int() }}</strong> hugs.
-    This week, <strong>{{ hugs_this_week|int() }}</strong>
-    {% if hugs_this_week == 1 %}
-        hug was
-    {% else %}
-        hugs were
-    {% endif %}
-    given, that is
-    {% if hugs_this_week > hugs_last_week %}
-        <strong>{{ hugs_this_week - hugs_last_week }} more</strong> than
-    {% elif hugs_this_week == hugs_last_week %}
-        <strong>the same as</strong>
-    {% else %}
-        <strong>{{ hugs_last_week - hugs_this_week }} less</strong> than
-    {% endif %}
-    last week (<strong>{{ hugs_last_week }}</strong>).
-</p>
+<div class="hero-unit">
+    <h1>GitHug</h1>
+    <p>
+        GitHug is a little like <a href="https://www.gittip.com/">GitTip</a>, but without credit cards or money. You get one hug per week to give to any user on
+        <a href="https://github.com">GitHub</a> to show your appreciation. It was inspired by a <a href="https://twitter.com/roguelynn/status/227848062842859520">typo</a>
+        by <a href="https://github.com/econchick">Lynn Root</a>.
+    </p>
+</div>
+<div class="row well well-small" id="realtime">XYZ hugged ABC</div>
+<div class="row">
+    <h2>Stats</h2>
+    <p>
+        In total, <strong>{{ total_hugs|int() }}</strong> have been given. On average, each user that gave hugs gave <strong>{{ average_hugs_given|int() }}</strong>
+        and each user that received hugs received <strong>{{ average_hugs_received|int() }}</strong> hugs.
+        This week, <strong>{{ hugs_this_week|int() }}</strong>
+        {% if hugs_this_week == 1 %}
+            hug was
+        {% else %}
+            hugs were
+        {% endif %}
+        given, that is
+        {% if hugs_this_week > hugs_last_week %}
+            <strong>{{ hugs_this_week - hugs_last_week }} more</strong> than
+        {% elif hugs_this_week == hugs_last_week %}
+            <strong>the same as</strong>
+        {% else %}
+            <strong>{{ hugs_last_week - hugs_this_week }} less</strong> than
+        {% endif %}
+        last week (<strong>{{ hugs_last_week }}</strong>).
+    </p>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>
+    <script type="text/javascript" src="/static/js/githug.js"></script>
+<script type="text/javascript">
+window.addEvent('domready', function(){
+    GitHug.realtime($('realtime'), "ws://{{ request.host }}{{ url_for('api') }}");
+});
+</script>
 {% endblock %}
