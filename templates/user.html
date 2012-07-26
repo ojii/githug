@@ -1,8 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>{{ user }}</h1>
-{% if not g.user or g.user.can_hug() %}
-<p><a href="{{ url_for('hug', username=user.name, network='github') }}">Hug!</a></p>
-{% endif %}
+<div class="row">
+    <div class="span4">
+        <h1>{{ user }}</h1>
+    </div>
+    <div class="span4 offset4">
+        <img class="avatar pull-right" src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
+    </div>
+</div>
+<div class="row">
+    {% if not g.user or g.user.can_hug() %}
+    <p><a href="{{ url_for('hug', username=user.name, network='github') }}">Hug!</a></p>
+    {% endif %}
+    <p>Check out on <a href="{{ user.network_url }}">{{ user.network }}</a>.</p>
+</div>
 {% include 'inc/user_stats.html' %}
 {% endblock %}
