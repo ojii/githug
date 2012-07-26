@@ -44,6 +44,7 @@
         This site is not affiliated with GitHub in any way. It was written by <a href="https://github.com/ojii">Jonas Obrist</a>
         using <a href="http://flask.pocoo.org">Flask</a> on <a href="http://www.heroku.com">Heroku</a>. If you like the idea,
         why not <a href="http://githug.herokuapp.com/hug/github/ojii/">hug</a> or <a href="https://www.gittip.com/ojii/">tip</a> me?
+        GitHug has an <a href="{{ url_for('api') }}">API</a>, go check it out!
     </footer>
 </div>
 {% if ANALYTICS_ID %}<script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setAccount', '{{ ANALYTICS_ID }}']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>{% endif %}
