@@ -29,8 +29,8 @@
     </form>
 {% else %}
     <div class="well">
-        {% set hug = user.get_this_week_hugged() %}
-        <p class="clearfix">You hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> this week! <img class="avatar pull-right" src="{{ hug.hugged.avatar_url }}" alt="Avatar of {{ hug.hugged }}" /></p>
+        {% set hug = user.get_today_hugged() %}
+        <p class="clearfix">You hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> today! <img class="avatar pull-right" src="{{ hug.hugged.avatar_url }}" alt="Avatar of {{ hug.hugged }}" /></p>
     </div>
 {% endif %}
 {% include 'inc/user_stats.html' %}

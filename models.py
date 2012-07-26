@@ -16,6 +16,11 @@ def get_year_number(when=None):
         when = datetime.date.today()
     return when.isocalendar()[0]
 
+def get_day_number(when=None):
+    if not when:
+        when = datetime.date.today()
+    return when.isocalendar()[2]
+
 
 class UserQuerySet(QuerySet):
     def total_hugs(self):
@@ -55,7 +60,7 @@ class User(Document):
         return 'https://github.com/%s' % self.name
 
     def can_hug(self):
-        return self.get_this_week_hugged() is None
+        return self.get_today_hugged() is None
 
     def hug(self, receiver):
         hug = Hug.objects.create(hugger=self, hugged=receiver)
@@ -64,6 +69,12 @@ class User(Document):
         receiver.hugs_received += 1
         receiver.save()
         return hug
+
+    def get_today_hugged(self):
+        try:
+            return Hug.objects.get(hugger=self, week=get_week_number(), year=get_year_number(), day=get_day_number())
+        except Hug.DoesNotExist:
+            return None
 
     def get_this_week_hugged(self):
         try:
@@ -103,6 +114,7 @@ class Hug(Document):
     created = fields.DateTimeField(default=datetime.datetime.now)
     week = fields.IntField(default=get_week_number)
     year = fields.IntField(default=get_year_number)
+    day = fields.IntField(default=get_day_number)
 
     meta = {'queryset_class': HugQuerySet}
 

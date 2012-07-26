@@ -14,5 +14,13 @@
     {% endif %}
     <p>Check out on <a href="{{ user.network_url }}">{{ user.network }}</a>.</p>
 </div>
+<div class="well well-small">
+    {% if user.can_hug() %}
+        <p>{{ user }} hasn't hugged anyone today.</p>
+    {% else %}
+    {% set hug = user.get_today_hugged() %}
+    <p class="clearfix">You hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> today! <img class="avatar pull-right" src="{{ hug.hugged.avatar_url }}" alt="Avatar of {{ hug.hugged }}" /></p>
+    {% endif %}
+</div>
 {% include 'inc/user_stats.html' %}
 {% endblock %}
