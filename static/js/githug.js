@@ -25,7 +25,7 @@ GitHug.Loop = new Class({
 
 GitHug.realtime = function(target, ws_url){
     if (!window.WebSocket){
-        return;
+        target.set('text', "Your browser is ancient and doesn't support websockets. For your own sake, please fix this as soon as possible by using a modern browser.")
     }
     var loop = new GitHug.Loop();
     loop.start(5000);
