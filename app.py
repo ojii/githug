@@ -7,7 +7,7 @@ import urlparse
 import os
 import json
 
-from flask import Flask, g, render_template, request, abort, redirect, url_for, session
+from flask import Flask, g, render_template, request, abort, redirect, url_for, session, jsonify
 from flask_heroku import Heroku
 from flaskext.seasurf import SeaSurf
 from mongoengine import connect
@@ -144,7 +144,7 @@ def hug(network, username):
     receiver,_ = User.objects.get_or_create(name=username, network=network, avatar_url=session['avatar-url'])
     del session['avatar-url']
     hug = g.user.hug(receiver)
-    redis.publish('hug', json.dumps(hug.to_dict()))
+    redis.publish('hug', json.dumps(hug.to_dict(True)))
     return redirect(url_for('me'))
 
 
@@ -156,6 +156,9 @@ def user(network, username):
         user = User.objects.get(network=network, name=username)
     except User.DoesNotExist:
         abort(404)
+    best = request.accept_mimetypes.best_match(['application/json', 'application/python', 'text/html'])
+    if best == 'application/json' and request.accept_mimetypes[best] > request.accept_mimetypes['text/html']:
+        return jsonify(user.to_dict(True))
     return render_template('user.html', user=user)
 
 # API

@@ -1,32 +1,60 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-    <title>Flask/Gevent WebSocket Test</title>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-        $(document).ready(function(){
-            $('form').submit(function(event){
-                ws.send($('#data').val())
-                return false;
-            });
-            if ("WebSocket" in window) {
-                ws = new WebSocket("ws://" + document.domain + ":5000{{ url_for('api') }}");
-                ws.onmessage = function (msg) {
-                    $("#log").append("<p>"+msg.data+"</p>")
-                };
-            } else {
-                alert("WebSocket not supported");
-            }
-        });
-    </script>
-</head>
-<body>
-<h1>Send:</h1>
-<form method='POST' action='#'>
-    <textarea name='data' id="data"></textarea>
-    <div><input type='submit'></div>
-</form>
-<h1>Receive:</h1>
-<div id="log"></div>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <h1>GitHug API</h1>
+        <h2>Realtime API</h2>
+        <p>
+            You can get realtime information about hugs as they happen by connecting to the websocket located at
+            <code>ws://{{ request.host }}{{ url_for('api') }}</code>. The websocket will get messages for each hug as it
+            happens. Hugs will be JSON objects looking like this:
+            <pre>
+                {
+                    "created": unix timestamp,
+                    "hugged": {
+                        "avatar_url": avatar url,
+                        "hugs_given": amount of hugs given,
+                        "hugs_received": amount of hugs received,
+                        "name": username,
+                        "network": network ('github' for now),
+                        "url": url to view profile/get user info
+                    },
+                    "hugger": {
+                        "avatar_url": avatar url,
+                        "hugs_given": amount of hugs given,
+                        "hugs_received": amount of hugs received,
+                        "name": username,
+                        "network": network ('github' for now),
+                        "url": url to view profile/get user info
+                    },
+                    "week": weeknumber,
+                    "year": yearnumber
+                }
+            </pre>
+        </p>
+        <h2>REST API</h2>
+        <p>
+            To get information about a user, just make a <code>GET</code> request to a users profile page with the
+            header <code>Accept: application/json</code>. The response will be a JSON representation of that user looking
+            like this:
+            <pre>
+                {
+                    "avatar_url": avatar url,
+                    "hugs": [
+                        {
+                            "created": unix timestamp,
+                            "hugged": username of hugged user,
+                            "hugger": username of hugger (this user),
+                            "week": weeknumber,
+                            "year": yearnumber
+                        }
+                    ],
+                    "hugs_given": amount of hugs this user gave,
+                    "hugs_received": amount of hugs this user received,
+                    "name": username,
+                    "network": network ('github' for now),
+                    "url": the URL of the user profile (the URL you requested)
+                }
+            </pre>
+        </p>
+    </div>
+{% endblock %}

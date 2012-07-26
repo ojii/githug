@@ -74,8 +74,8 @@ class User(Document):
     def get_this_week_hugged_by(self):
         return Hug.objects.filter(hugged=self, week=get_week_number(), year=get_year_number())
 
-    def to_dict(self):
-        return {
+    def to_dict(self, follow=False):
+        data = {
             'name': self.name,
             'network': self.network,
             'hugs_received': self.hugs_received,
@@ -83,6 +83,9 @@ class User(Document):
             'avatar_url': self.avatar_url,
             'url': self.url,
         }
+        if follow:
+            data['hugs'] = [hug.to_dict(False) for hug in Hug.objects.filter(hugger=self).select_related()]
+        return data
 
 
 class HugQuerySet(QuerySet):
@@ -106,11 +109,16 @@ class Hug(Document):
     def __unicode__(self):
         return u'%s -> %s' % (self.hugger, self.hugged)
 
-    def to_dict(self):
-        return {
-            'hugger': self.hugger.to_dict(),
-            'hugged': self.hugged.to_dict(),
+    def to_dict(self, follow=False):
+        data = {
             'created': time.mktime(self.created.timetuple()),
             'week': self.week,
             'year': self.year,
         }
+        if follow:
+            data['hugger'] = self.hugger.to_dict()
+            data['hugged'] = self.hugged.to_dict()
+        else:
+            data['hugger'] = self.hugger.name
+            data['hugged'] = self.hugged.name
+        return data
