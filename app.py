@@ -38,7 +38,7 @@ app.secret_key = os.environ['SECRET']
 heroku = Heroku(app)
 if app.config.get('SENTRY_DSN'):
     sentry = Sentry(app)
-connect(app.config['MONGODB_DB'], host=app.config['MONGODB_HOST'], port=app.config['MONGODB_PORT'], username=app.config['MONGODB_USER'], password=app.config['MONGODB_PASSWORD'])
+db = connect(app.config['MONGODB_DB'], host=app.config['MONGODB_HOST'], port=app.config['MONGODB_PORT'], username=app.config['MONGODB_USER'], password=app.config['MONGODB_PASSWORD'])
 github = GitHugAuth(
     client_id=os.environ['GITHUB_CLIENT_ID'],
     client_secret=os.environ['GITHUB_SECRET'],

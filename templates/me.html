@@ -14,19 +14,7 @@
     </div>
 </div>
 {% if user.can_hug() %}
-    <form method="post" action="{{ url_for('prepare_to_hug') }}" class="form-horizontal">
-        <fieldset>
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-            <div class="control-group">
-                <label class="control-label" for="receiver">Hug someone!</label>
-                <div class="controls">
-                    <div class="input-append">
-                        <input class="span4" name="receiver" id="receiver" type="text" placeholder="GitHub username" /><button class="btn" type="submit">Hug!</button>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-    </form>
+    {% include "inc/hug_form.html" %}
 {% else %}
     <div class="well">
         {% set hug = user.get_today_hugged() %}

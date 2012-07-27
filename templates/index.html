@@ -8,6 +8,9 @@
         by <a href="https://github.com/econchick">Lynn Root</a>.
     </p>
 </div>
+{% if g.user and g.user.can_hug() %}
+    {% include "inc/hug_form.html" %}
+{% endif %}
 <div class="row well well-small"><span id="realtime">Waiting for someone to hug someone...</span></div>
 <div class="row">
     <h2>Stats</h2>
