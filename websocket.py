@@ -30,7 +30,10 @@ def index():
                 if obj['type'] == 'message':
                     web_socket.send(obj['data'])
         except Exception:
-            web_socket.close()
+            try:
+                web_socket.close()
+            except Exception:
+                pass
             raise
     else:
         return render_template('api_docs.html')
