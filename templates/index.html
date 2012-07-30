@@ -37,11 +37,13 @@
 {% endblock %}
 
 {% block js %}
+{% if g.websocket_url %}
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>
     <script type="text/javascript" src="/static/js/githug.js"></script>
 <script type="text/javascript">
 window.addEvent('domready', function(){
-    GitHug.realtime($('realtime'), "ws://{{ request.host }}{{ url_for('api') }}");
+    GitHug.realtime($('realtime'), "{{ g.websocket_url }}");
 });
 </script>
+{% endif %}
 {% endblock %}

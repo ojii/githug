@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-from gevent import monkey; monkey.patch_all()
-from geventwebsocket.handler import WebSocketHandler
-from gevent.pywsgi import WSGIServer
-
 import urlparse
 import os
 import json
@@ -35,6 +31,7 @@ import requests
 
 app = Flask(__name__)
 app.secret_key = os.environ['SECRET']
+app.config['WEBSOCKET_URL'] = os.environ['WEBSOCKET_URL']
 heroku = Heroku(app)
 if app.config.get('SENTRY_DSN'):
     sentry = Sentry(app)
@@ -60,6 +57,7 @@ requests_session = requests.session()
 @app.before_request
 def before_request():
     g.user = github.get_user()
+    g.websocket_url = app.config['WEBSOCKET_URL']
 
 @app.teardown_request
 def teardown_request(exception):
@@ -161,25 +159,9 @@ def user(network, username):
         return jsonify(user.to_dict(True))
     return render_template('user.html', user=user)
 
-# API
-
-
 @app.route('/api/')
 def api():
-    if request.environ.get('wsgi.websocket'):
-        web_socket = request.environ['wsgi.websocket']
-        pubsub = redis.pubsub()
-        pubsub.subscribe('hug')
-        try:
-            for obj in pubsub.listen():
-                if obj['type'] == 'message':
-                    web_socket.send(obj['data'])
-        except Exception:
-            web_socket.close()
-            raise
-    else:
-        return render_template('api_docs.html')
-
+    return render_template('api_docs.html')
 
 # Run this stuff!
 
@@ -187,6 +169,8 @@ if __name__ == '__main__':
     port = os.environ.get('PORT', None) or 5000
     app.local = os.environ.get('LOCAL', None) is not None
     if app.local:
-        app.debug = True
-    http_server = WSGIServer(('0.0.0.0', int(port)), app, handler_class=WebSocketHandler)
-    http_server.serve_forever()
+        app.run(debug=True, port=int(port))
+    else:
+        from gevent.pywsgi import WSGIServer
+        http_server = WSGIServer(('0.0.0.0', int(port)), app)
+        http_server.serve_forever()
