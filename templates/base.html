@@ -14,38 +14,27 @@
 
 <body>
 
+{%  block nav %}
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <a class="brand" href="/">GitHug</a>
-            <div class="btn-group pull-right">
-                {% if g.user %}
-                    <a class="btn" href="{{ url_for('me') }}"><i class="icon-user"></i> {{ g.user }}</a>
-                {% else %}
-                <a class="btn-auth btn-github" href="{{ url_for('github_login') }}">
-                    Log in with <b>GitHub</b>
-                </a>
-                {% endif %}
-            </div>
+            <a class="brand" href="http://githug.herokuapp.com/">GitHug</a>
         </div>
     </div>
 </div>
+{% endblock %}
 
 <div class="container">
     {% block content %}
     {% endblock %}
     <hr />
+    {% block footer %}
     <footer>
-        This site is not affiliated with GitHub in any way. It was written by <a href="{{ url_for('user', network='github', username='ojii') }}">Jonas Obrist</a>
+        This site is not affiliated with GitHub in any way. It was written by <a href="https://github.com/ojii">Jonas Obrist</a>
         using <a href="http://flask.pocoo.org">Flask</a> on <a href="http://www.heroku.com">Heroku</a>. If you like the idea,
         why not <a href="http://githug.herokuapp.com/hug/github/ojii/">hug</a> or <a href="https://www.gittip.com/ojii/">tip</a> me?
-        GitHug has an <a href="{{ url_for('api') }}">API</a>, go check it out!
     </footer>
+    {% endblock  %}
 </div>
 {% if ANALYTICS_ID %}<script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setAccount', '{{ ANALYTICS_ID }}']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>{% endif %}
 {% block js %}{% endblock %}

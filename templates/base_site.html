@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{%  block nav %}
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="/">GitHug</a>
+                <div class="btn-group pull-right">
+                    {% if g.user %}
+                        <a class="btn" href="{{ url_for('me') }}"><i class="icon-user"></i> {{ g.user }}</a>
+                    {% else %}
+                        <a class="btn-auth btn-github" href="{{ url_for('github_login') }}">
+                            Log in with <b>GitHub</b>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <footer>
+        This site is not affiliated with GitHub in any way. It was written by <a href="{{ url_for('user', network='github', username='ojii') }}">Jonas Obrist</a>
+        using <a href="http://flask.pocoo.org">Flask</a> on <a href="http://www.heroku.com">Heroku</a>. If you like the idea,
+        why not <a href="http://githug.herokuapp.com/hug/github/ojii/">hug</a> or <a href="https://www.gittip.com/ojii/">tip</a> me?
+        GitHug has an <a href="{{ url_for('api') }}">API</a>, go check it out!
+    </footer>
+{% endblock  %}
