@@ -169,9 +169,4 @@ def api():
 if __name__ == '__main__':
     port = os.environ.get('PORT', None) or 5000
     app.local = os.environ.get('LOCAL', None) is not None
-    if app.local:
-        app.run(debug=True, port=int(port))
-    else:
-        from gevent.pywsgi import WSGIServer
-        http_server = WSGIServer(('0.0.0.0', int(port)), app)
-        http_server.serve_forever()
+    app.run(debug=app.local, port=int(port))
