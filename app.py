@@ -32,6 +32,7 @@ import requests
 app = Flask(__name__)
 app.secret_key = os.environ['SECRET']
 app.config['WEBSOCKET_URL'] = os.environ['WEBSOCKET_URL']
+app.config['REDIS_CHANNEL'] = os.environ['REDIS_CHANNEL']
 heroku = Heroku(app)
 if app.config.get('SENTRY_DSN'):
     sentry = Sentry(app)
@@ -142,7 +143,7 @@ def hug(network, username):
     receiver,_ = User.objects.get_or_create(name=username, network=network, avatar_url=session['avatar-url'])
     del session['avatar-url']
     hug = g.user.hug(receiver)
-    redis.publish('hug', json.dumps(hug.to_dict(True)))
+    redis.publish(app.config['REDIS_CHANNEL'], json.dumps(hug.to_dict(True)))
     return redirect(url_for('me'))
 
 
