@@ -12,6 +12,7 @@ from raven.contrib.flask import Sentry
 from redis import from_url
 
 from auth import GithubAuth
+from forecedomain import ForceDomain
 from models import User, Hug
 
 
@@ -35,9 +36,12 @@ app.secret_key = os.environ['SECRET']
 app.config['WEBSOCKET_URL'] = os.environ['WEBSOCKET_URL']
 app.config['REDIS_CHANNEL'] = os.environ['REDIS_CHANNEL']
 app.local = os.environ.get('LOCAL', None) is not None
+forced_domain = os.environ.get('FOCRED_DOMAIN', None)
+if forced_domain:
+    ForceDomain(app)
 app.debug = bool(app.local)
 if not app.debug:
-    sslify = SSLify(app)
+    SSLify(app)
 heroku = Heroku(app)
 if app.config.get('SENTRY_DSN'):
     sentry = Sentry(app)
@@ -52,7 +56,7 @@ github = GitHugAuth(
     admin_field='is_admin',
     login_view_name='github_login',
 )
-csrf = SeaSurf(app)
+SeaSurf(app)
 redis = from_url(os.environ['REDISTOGO_URL'])
 requests_session = requests.session()
 
