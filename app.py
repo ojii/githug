@@ -36,7 +36,7 @@ app.secret_key = os.environ['SECRET']
 app.config['WEBSOCKET_URL'] = os.environ['WEBSOCKET_URL']
 app.config['REDIS_CHANNEL'] = os.environ['REDIS_CHANNEL']
 app.local = os.environ.get('LOCAL', None) is not None
-forced_domain = os.environ.get('FOCRED_DOMAIN', None)
+forced_domain = os.environ.get('FORCED_DOMAIN', None)
 if forced_domain:
     ForceDomain(app)
 app.debug = bool(app.local)
