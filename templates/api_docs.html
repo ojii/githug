@@ -5,7 +5,7 @@
         <h2>Realtime API</h2>
         <p>
             You can get realtime information about hugs as they happen by connecting to the websocket located at
-            <code>ws://githugapi.ojii.ch/</code>. The websocket will get messages for each hug as it
+            <code>wss://githugapi.ojii.ch/</code>. The websocket will get messages for each hug as it
             happens. Hugs will be JSON objects looking like this:
             <pre>
                 {
@@ -34,7 +34,7 @@
         <h2>REST API</h2>
         <p>
             To get information about a user, just make a <code>GET</code> request to a users profile page (for example
-            <code>http://githugs.org/user/github/ojii/</code> with the header <code>Accept: application/json</code>.
+            <code>https://www.githugs.org/user/github/ojii/</code> with the header <code>Accept: application/json</code>.
             The response will be a JSON representation of that user looking like this:
             <pre>
                 {
