@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import urlparse
-from flask_sslify import SSLify
 import os
 import json
 
@@ -37,8 +36,6 @@ app.config['REDIS_CHANNEL'] = os.environ['REDIS_CHANNEL']
 app.config['FORCED_DOMAIN'] = os.environ.get('FORCED_DOMAIN', None)
 app.local = os.environ.get('LOCAL', None) is not None
 app.debug = bool(app.local)
-if not app.debug:
-    SSLify(app)
 heroku = Heroku(app)
 if app.config.get('SENTRY_DSN'):
     sentry = Sentry(app)
@@ -67,7 +64,16 @@ def before_request():
     g.websocket_url = app.config['WEBSOCKET_URL']
     if app.config['FORCED_DOMAIN'] and request.host_url != app.config['FORCED_DOMAIN']:
         return redirect(request.url.replace(request.host_url, app.config['FORCED_DOMAIN']))
-    print request.host, request.host_url
+    criteria = [
+        request.is_secure,
+        app.debug,
+        request.headers.get('X-Forwarded-Proto', 'http') == 'https'
+    ]
+
+    if not any(criteria):
+        if request.url.startswith('http://'):
+            url = request.url.replace('http://', 'https://', 1)
+            return redirect(url)
 
 @app.teardown_request
 def teardown_request(exception):
@@ -75,6 +81,12 @@ def teardown_request(exception):
         del g.user
     except AttributeError:
         pass
+
+@app.after_request
+def after_request(response):
+    if not app.debug:
+        response.headers.setdefault('Strict-Transport-Security', 'max-age=3600')
+    return response
 
 @app.context_processor
 def reverse_filter():
