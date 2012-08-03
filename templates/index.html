@@ -1,16 +1,11 @@
 {% extends "base_site.html" %}
 {% block content %}
-<div class="hero-unit">
+<div class="hero-unit row">
     <h1>GitHugs</h1>
-    <p>
-        GitHugs is a little like <a href="https://www.gittip.com/">GitTip</a>, but without credit cards or money. You get <strong>one hug per day</strong> to give to any user on
-        <a href="https://github.com">GitHub</a> to show your appreciation. It was inspired by a <a href="https://twitter.com/roguelynn/status/227848062842859520">typo</a>
-        by <a href="https://github.com/econchick">Lynn Root</a>.
-    </p>
+    {% if g.user and g.user.can_hug() %}
+        {% include "inc/hug_form.html" %}
+    {% endif %}
 </div>
-{% if g.user and g.user.can_hug() %}
-    {% include "inc/hug_form.html" %}
-{% endif %}
 <div class="row well well-small"><span id="realtime">Waiting for someone to hug someone...</span></div>
 <div class="row">
     <h2>Stats</h2>

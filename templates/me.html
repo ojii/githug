@@ -1,30 +1,35 @@
 {% extends "base_site.html" %}
 {% block content %}
-<div class="row">
-    <div class="span4">
-        <h1>Welcome {{ user }}</h1>
-    </div>
-    <div class="span4 offset4">
-        <img class="avatar pull-right" src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
-    </div>
-    <form class="form-inline" method="POST" action="{{ url_for('logout') }}">
+<div class="row hero-unit">
+    <img class="avatar pull-right" src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
+    <h1>Welcome {{ user }}</h1>
+    <form class="form-inline pull-left" method="POST" action="{{ url_for('logout') }}">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <input class="btn" type="submit" value="Logout" />
     </form>
 </div>
 <div class="row">
-    <div class="span12">
-        <h2>Give hugs!</h2>
-    </div>
+    <h2>Notifications</h2>
+    <form method="post" action="{{ url_for('save_settings') }}" class="well form-inline">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <label class="checkbox">
+            <input name="notifications" type="checkbox"{% if user.notifications %} checked="checked"{%  endif %}> Get notifications
+        </label>
+        <input type="text" class="input" placeholder="Email" name="email" value="{{ user.email }}">
+        <button type="submit" class="btn">Save</button>
+    </form>
 </div>
-{% if user.can_hug() %}
-    {% include "inc/hug_form.html" %}
-{% else %}
-    <div class="well">
-        {% set hug = user.get_today_hugged() %}
-        <p class="clearfix">You hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> today! <img class="avatar pull-right" src="{{ hug.hugged.avatar_url }}" alt="Avatar of {{ hug.hugged }}" /></p>
-    </div>
-{% endif %}
+<div class="row">
+    <h2>Give hugs!</h2>
+    {% if user.can_hug() %}
+        {% include "inc/hug_form.html" %}
+    {% else %}
+        <div class="well">
+            {% set hug = user.get_today_hugged() %}
+            <p class="clearfix">You hugged <a href="{{ hug.hugged.url }}">{{ hug.hugged }}</a> today! <img class="avatar pull-right" src="{{ hug.hugged.avatar_url }}" alt="Avatar of {{ hug.hugged }}" /></p>
+        </div>
+    {% endif %}
+</div>
 {% include 'inc/user_stats.html' %}
 <div class="row">
     <p>

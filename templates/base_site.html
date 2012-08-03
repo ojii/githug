@@ -5,6 +5,13 @@
         <div class="navbar-inner">
             <div class="container">
                 <a class="brand" href="/">GitHugs</a>
+                <div class="nav">
+                    <ul class="nav">
+                        <li>
+                            <a class="" href="{{ url_for('about') }}">About</a>
+                        </li>
+                    </ul>
+                </div>
                 <div class="btn-group pull-right">
                     {% if g.user %}
                         <a class="btn" href="{{ url_for('me') }}"><i class="icon-user"></i> {{ g.user }}</a>

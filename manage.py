@@ -16,7 +16,6 @@ def migrate(args):
     MIGRATIONS[args.name]()
 
 def clear(args):
-    assert args.confirm
     Hug.objects().delete()
     User.objects().delete()
 
@@ -26,7 +25,6 @@ if __name__ == '__main__':
     subparsers = parser.add_subparsers()
 
     parser_clear = subparsers.add_parser('clear')
-    parser_clear.add_argument('--confirm', action='store_true')
     parser_clear.set_defaults(func=clear)
 
     parser_clear = subparsers.add_parser('migrate')

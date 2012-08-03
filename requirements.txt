@@ -8,6 +8,7 @@ blinker==1.2
 chardet==1.1
 -e git://github.com/kennethreitz/flask-heroku.git@4408f2ff88a5c2d8328891166b35e90ce97d8484#egg=flask_heroku-dev
 gunicorn==0.14.6
+itsdangerous==0.16
 lamson==1.1
 lockfile==0.9.1
 mock==1.0b1

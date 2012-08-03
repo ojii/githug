@@ -2,6 +2,7 @@
 import datetime
 import time
 from flask import url_for
+from flaskext.mail.message import Message
 from mongoengine import fields, Document
 from mongoengine.queryset import QuerySet
 
@@ -41,7 +42,7 @@ class User(Document):
     hugs_received = fields.IntField(default=0)
     hugs_given = fields.IntField(default=0)
     avatar_url = fields.StringField(required=False)
-    wants_notifcations = fields.BooleanField(default=False)
+    notifications = fields.BooleanField(default=False)
     email = fields.EmailField(required=False)
 
     meta = {'queryset_class': UserQuerySet}
@@ -87,6 +88,10 @@ class User(Document):
     def get_this_week_hugged_by(self):
         return Hug.objects.filter(hugged=self, week=get_week_number(), year=get_year_number())
 
+    def get_unsubscribe_token(self):
+        from app import signer
+        return signer.dumps({'name': self.name, 'network': self.network, 'action': 'unsubscribe'})
+
     def to_dict(self, follow=False):
         data = {
             'name': self.name,
@@ -122,6 +127,30 @@ class Hug(Document):
 
     def __unicode__(self):
         return u'%s -> %s' % (self.hugger, self.hugged)
+
+    def notify_receiver(self):
+        """
+        Notify the receiver
+        """
+        from app import mail
+        body = """Hi %(hugged)s,
+
+        You've just been hugged by %(hugger)s on https://www.githugs.org.
+
+        Your GitHugs team.
+
+        PS: If you don't want these notifications, click %(unsubscribe_url)s""" % {
+            'hugged': self.hugged,
+            'hugger': self.hugger,
+            'unsubscribe_url': 'https://www.githugs.org%s' % url_for('unsubscribe', token=self.hugged.get_unsubscribe_token())
+        }
+        message = Message(
+            subject="You have been hugged",
+            sender="hugs@githugs.org",
+            recipients=[self.hugged.email],
+            body=body,
+        )
+        mail.send(message)
 
     def to_dict(self, follow=False):
         data = {

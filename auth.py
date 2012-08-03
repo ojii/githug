@@ -13,6 +13,7 @@ class GithubAuth(object):
     session_suffix_username = 'username'
     session_suffix_state = 'state'
     session_suffix_url = 'url'
+    default_redirect = '/'
 
     def __init__(self, client_id, client_secret, session_key_prefix, model, username_field,
                  access_token_field, admin_field, login_view_name):
@@ -80,7 +81,7 @@ class GithubAuth(object):
         session[self.username_session_key] = username
         user = self.build_user(data)
         user.save()
-        url = session.pop(self.url_session_key, '/')
+        url = session.pop(self.url_session_key, self.default_redirect)
         return redirect(url)
 
     def build_user(self, data):

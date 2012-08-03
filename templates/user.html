@@ -1,20 +1,16 @@
 {% extends "base_site.html" %}
 {% block content %}
-<div class="row">
-    <div class="span4">
-        <h1>{{ user }}</h1>
-    </div>
-    <div class="span4 offset4">
-        <img class="avatar pull-right" src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
-    </div>
+<div class="row hero-unit">
+    <img class="avatar pull-right" src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
+    <h1>{{ user }}</h1>
+    <p>Check out on <a href="{{ user.network_url }}">{{ user.network }}</a>.</p>
 </div>
 <div class="row">
     {% if not g.user or g.user.can_hug() %}
     <p><a href="{{ url_for('hug', username=user.name, network='github') }}">Hug!</a></p>
     {% endif %}
-    <p>Check out on <a href="{{ user.network_url }}">{{ user.network }}</a>.</p>
 </div>
-<div class="well well-small">
+<div class="row well well-small">
     {% if user.can_hug() %}
         <p>{{ user }} hasn't hugged anyone today.</p>
     {% else %}
