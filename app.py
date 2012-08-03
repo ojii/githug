@@ -23,6 +23,7 @@ class GitHugAuth(GithubAuth):
     def build_user(self, data):
         user = super(GitHugAuth, self).build_user(data)
         user.avatar_url = data['user']['avatar_url']
+        user.email = data['user'].get('email', '')
         return user
 
 #

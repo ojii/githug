@@ -66,7 +66,7 @@ class GithubAuth(object):
         if not code:
             abort(400)
         state = request.args.get('state', None)
-        if not state or state != session[self.state_session_key]:
+        if not state or self.state_session_key not in session or state != session[self.state_session_key]:
             abort(400)
         del session[self.state_session_key]
         data = self.get_data_from_code(code)
