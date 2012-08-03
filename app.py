@@ -6,6 +6,7 @@ import json
 from flask import Flask, g, render_template, request, abort, redirect, url_for, session, jsonify
 from flask_heroku import Heroku
 from flaskext.seasurf import SeaSurf
+from flaskext.mail import Mail, Message
 from mongoengine import connect
 from raven.contrib.flask import Sentry
 from redis import from_url
@@ -51,6 +52,7 @@ github = GitHugAuth(
     login_view_name='github_login',
 )
 SeaSurf(app)
+Mail(app)
 redis = from_url(os.environ['REDISTOGO_URL'])
 requests_session = requests.session()
 

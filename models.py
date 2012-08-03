@@ -41,6 +41,8 @@ class User(Document):
     hugs_received = fields.IntField(default=0)
     hugs_given = fields.IntField(default=0)
     avatar_url = fields.StringField(required=False)
+    wants_notifcations = fields.BooleanField(default=False)
+    email = fields.EmailField(required=False)
 
     meta = {'queryset_class': UserQuerySet}
 
