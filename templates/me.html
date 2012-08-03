@@ -7,6 +7,10 @@
     <div class="span4 offset4">
         <img class="avatar pull-right" src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
     </div>
+    <form class="form-inline" method="POST" action="{{ url_for('logout') }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <input class="btn" type="submit" value="Logout" />
+    </form>
 </div>
 <div class="row">
     <div class="span12">

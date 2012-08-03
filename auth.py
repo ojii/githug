@@ -61,6 +61,10 @@ class GithubAuth(object):
         url = '%s?%s' % (self.login_url, params)
         return redirect(url)
 
+    def logout(self):
+        if self.username_session_key in session:
+            del session[self.username_session_key]
+
     def auth(self):
         code = request.args.get('code', None)
         if not code:

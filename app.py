@@ -74,7 +74,7 @@ def before_request():
     if not any(criteria):
         if request.url.startswith('http://'):
             url = request.url.replace('http://', 'https://', 1)
-            return redirect(url)
+            return redirect(url, 301)
 
 @app.teardown_request
 def teardown_request(exception):
@@ -135,6 +135,11 @@ def prepare_to_hug():
         return redirect(url_for('confirm_hug', network='github', username=request.form['receiver']))
     except KeyError:
         abort(400)
+
+@app.route('/logout/', methods=['POST'])
+def logout():
+    github.logout()
+    return redirect('/')
 
 # Two step hug
 
