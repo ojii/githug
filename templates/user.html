@@ -4,10 +4,8 @@
     <img class="avatar pull-right" src="{{ user.avatar_url }}" alt="Avatar of {{ user }}" />
     <h1>{{ user }}</h1>
     <p>Check out on <a href="{{ user.network_url }}">{{ user.network }}</a>.</p>
-</div>
-<div class="row">
     {% if not g.user or g.user.can_hug() %}
-    <p><a href="{{ url_for('hug', username=user.name, network='github') }}">Hug!</a></p>
+        <p><a href="{{ url_for('hug', username=user.name, network='github') }}">Hug!</a></p>
     {% endif %}
 </div>
 <div class="row well well-small">
