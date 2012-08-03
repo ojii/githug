@@ -12,7 +12,6 @@ from raven.contrib.flask import Sentry
 from redis import from_url
 
 from auth import GithubAuth
-from forecedomain import ForceDomain
 from models import User, Hug
 
 
