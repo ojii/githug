@@ -3,6 +3,7 @@
 <div class="hero-unit row">
     <h1>GitHugs</h1>
     <p>free &amp; open source gratitude</p>
+    <p>This site is all about showing people appreciation by giving them (virtual) hugs. So why not <a href="{{ url_for('confirm_hug', network=random_user.network, username=random_user.name) }}">hug</a> {{ random_user.verbose_name }}?</p>
     {% if g.user and g.user.can_hug() %}
         {% include "inc/hug_form.html" %}
     {% endif %}

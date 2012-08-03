@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from collections import namedtuple
+import random
 import urlparse
 from itsdangerous import URLSafeSerializer
 import os
@@ -74,6 +76,8 @@ requests_session = requests.session()
 # Helpers
 #
 
+RandomUser = namedtuple('RandomUser', 'network name verbose_name')
+
 @app.before_request
 def before_request():
     g.user = github.get_user()
@@ -134,7 +138,14 @@ def _get_stats():
 @app.route('/')
 def index():
     stats = _get_stats()
-    return render_template('index.html', **stats)
+    random_user = random.choice([
+        RandomUser('github', 'toastdriven', 'Daniel Lindsley'),
+        RandomUser('github', 'kennethreitz', 'Kenneth Reitz',),
+        RandomUser('github', 'alex', 'Alex Gaynor'),
+        RandomUser('github', 'ericholscher', 'Eric Holscher'),
+        RandomUser('github', 'econchick', 'Lynn Root'),
+    ])
+    return render_template('index.html', random_user=random_user, **stats)
 
 @app.route('/about/')
 def about():
