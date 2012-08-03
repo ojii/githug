@@ -35,10 +35,8 @@ app = Flask(__name__)
 app.secret_key = os.environ['SECRET']
 app.config['WEBSOCKET_URL'] = os.environ['WEBSOCKET_URL']
 app.config['REDIS_CHANNEL'] = os.environ['REDIS_CHANNEL']
+app.config['FORCED_DOMAIN'] = os.environ.get('FORCED_DOMAIN', None)
 app.local = os.environ.get('LOCAL', None) is not None
-forced_domain = os.environ.get('FORCED_DOMAIN', None)
-if forced_domain:
-    ForceDomain(app)
 app.debug = bool(app.local)
 if not app.debug:
     SSLify(app)
@@ -68,6 +66,9 @@ requests_session = requests.session()
 def before_request():
     g.user = github.get_user()
     g.websocket_url = app.config['WEBSOCKET_URL']
+    if app.config['FORCED_DOMAIN'] and request.host_url != app.config['FORCED_DOMAIN']:
+        return redirect(request.url.replace(request.host_url, app.config['FORCED_DOMAIN']))
+    print request.host, request.host_url
 
 @app.teardown_request
 def teardown_request(exception):
