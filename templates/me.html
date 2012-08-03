@@ -15,7 +15,7 @@
         <label class="checkbox">
             <input name="notifications" type="checkbox"{% if user.notifications %} checked="checked"{%  endif %}> Get notifications
         </label>
-        <input type="text" class="input" placeholder="Email" name="email" value="{{ user.email|default('') }}">
+        <input type="text" class="input" placeholder="Email" name="email" value="{{ user.email|default('', True) }}">
         <button type="submit" class="btn">Save</button>
     </form>
 </div>
