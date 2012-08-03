@@ -160,7 +160,7 @@ def prepare_to_hug():
 @github.login_required
 def save_settings():
     g.user.notifications = bool(request.form.get('notifications', False))
-    g.user.email = request.form.get('email', '')
+    g.user.email = request.form.get('email', '') or None
     g.user.save()
     return redirect(url_for('me'))
 
