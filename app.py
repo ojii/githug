@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import urlparse
+from flask_sslify import SSLify
 import os
 import json
 
@@ -33,6 +34,10 @@ app = Flask(__name__)
 app.secret_key = os.environ['SECRET']
 app.config['WEBSOCKET_URL'] = os.environ['WEBSOCKET_URL']
 app.config['REDIS_CHANNEL'] = os.environ['REDIS_CHANNEL']
+app.local = os.environ.get('LOCAL', None) is not None
+app.debug = bool(app.local)
+if not app.debug:
+    sslify = SSLify(app)
 heroku = Heroku(app)
 if app.config.get('SENTRY_DSN'):
     sentry = Sentry(app)
@@ -168,5 +173,4 @@ def api():
 
 if __name__ == '__main__':
     port = os.environ.get('PORT', None) or 5000
-    app.local = os.environ.get('LOCAL', None) is not None
-    app.run(debug=app.local, port=int(port))
+    app.run(port=int(port))
