@@ -62,6 +62,7 @@ requests_session = requests.session()
 def before_request():
     g.user = github.get_user()
     g.websocket_url = app.config['WEBSOCKET_URL']
+    raise Exception(request.host_url)
     if app.config['FORCED_DOMAIN'] and request.host_url != app.config['FORCED_DOMAIN']:
         return redirect(request.url.replace(request.host_url, app.config['FORCED_DOMAIN']))
     criteria = [
