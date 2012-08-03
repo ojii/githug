@@ -2,6 +2,7 @@
 {% block content %}
 <div class="hero-unit row">
     <h1>GitHugs</h1>
+    <p>free &amp; open source gratitude</p>
     {% if g.user and g.user.can_hug() %}
         {% include "inc/hug_form.html" %}
     {% endif %}
