@@ -23,10 +23,9 @@ GitHug.Loop = new Class({
     }
 });
 
-GitHug.realtime = function(target, ws_url){
-    if (!window.WebSocket){
-        target.set('text', "Your browser is ancient and doesn't support websockets. For your own sake, please fix this as soon as possible by using a modern browser.")
-    }
+GitHug.realtime = function(target, app_id, channel, event){
+    var pusher = new Pusher(app_id);
+    var channel = pusher.subscribe(channel);
     var loop = new GitHug.Loop();
     loop.start(5000);
     loop.addEvent('next', function(hug){
@@ -39,9 +38,8 @@ GitHug.realtime = function(target, ws_url){
             }).start(0, 1);
         });
     });
-    var ws = new WebSocket(ws_url);
-    ws.onmessage = function (msg) {
-        var hug = JSON.parse(msg.data);
-        loop.append(hug);
-    };
+    channel.bind(event, function (data) {
+        loop.append(data);
+    });
+    return loop;
 };

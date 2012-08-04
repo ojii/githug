@@ -2,7 +2,6 @@
 from collections import namedtuple
 import random
 import urlparse
-from itsdangerous import URLSafeSerializer
 import os
 import json
 
@@ -12,7 +11,8 @@ from flaskext.seasurf import SeaSurf
 from flaskext.mail import Mail, Message
 from mongoengine import connect
 from raven.contrib.flask import Sentry
-from redis import from_url
+from itsdangerous import URLSafeSerializer
+import pusher
 
 from auth import GithubAuth
 from models import User, Hug
@@ -40,9 +40,6 @@ import requests
 
 app = Flask(__name__)
 app.secret_key = os.environ['SECRET']
-app.config['WEBSOCKET_URL'] = os.environ['WEBSOCKET_URL']
-app.config['REDIS_CHANNEL'] = os.environ['REDIS_CHANNEL']
-app.config['FORCED_DOMAIN'] = os.environ.get('FORCED_DOMAIN', None)
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'localhost')
 app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 25))
 app.config['MAIL_USE_TLS'] = bool(os.environ.get('MAIL_USE_TLS', False))
@@ -69,8 +66,11 @@ github = GitHugAuth(
 SeaSurf(app)
 mail = Mail(app)
 signer = URLSafeSerializer(app.secret_key)
-redis = from_url(os.environ['REDISTOGO_URL'])
 requests_session = requests.session()
+pusher.app_id = os.environ.get('PUSHER_APP_ID', None)
+pusher.key = os.environ.get('PUSHER_KEY', None)
+pusher.secret = os.environ.get('PUSHER_SECRET', None)
+app.config['PUSHER'] = all([pusher.app_id, pusher.key, pusher.secret])
 
 #
 # Helpers
@@ -81,7 +81,14 @@ RandomUser = namedtuple('RandomUser', 'network name verbose_name')
 @app.before_request
 def before_request():
     g.user = github.get_user()
-    g.websocket_url = app.config['WEBSOCKET_URL']
+    if app.config['PUSHER']:
+        g.push = pusher.Pusher()
+        g.PUSHER_APP_KEY = pusher.key
+        g.PUSHER_CHANNEL = 'hugs'
+        g.PUSHER_EVENT = 'hug'
+    else:
+        g.push = None
+        g.PUSHER_APP_KEY = None
     criteria = [
         request.is_secure,
         app.debug,
@@ -145,7 +152,8 @@ def index():
         RandomUser('github', 'ericholscher', 'Eric Holscher'),
         RandomUser('github', 'econchick', 'Lynn Root'),
     ])
-    return render_template('index.html', random_user=random_user, **stats)
+    preloaded_hugs = map(json.dumps, [hug.to_dict(True) for hug in Hug.objects.get_recent(5)])
+    return render_template('index.html', preloaded_hugs=preloaded_hugs, random_user=random_user, **stats)
 
 @app.route('/about/')
 def about():
@@ -222,7 +230,8 @@ def hug(network, username):
     receiver,_ = User.objects.get_or_create(name=username, network=network, avatar_url=session['avatar-url'])
     del session['avatar-url']
     hug = g.user.hug(receiver)
-    redis.publish(app.config['REDIS_CHANNEL'], json.dumps(hug.to_dict(True)))
+    if g.push:
+        g.push[g.PUSHER_CHANNEL].trigger(g.PUSHER_EVENT, hug.to_dict(True))
     if receiver.notifications and receiver.email:
         print "NOTIFYING"
         hug.notify_receiver()

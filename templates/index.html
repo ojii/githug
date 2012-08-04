@@ -8,7 +8,9 @@
         {% include "inc/hug_form.html" %}
     {% endif %}
 </div>
+{% if g.PUSHER_APP_KEY %}
 <div class="row well well-small"><span id="realtime">Waiting for someone to hug someone...</span></div>
+{% endif %}
 <div class="row">
     <h2>Stats</h2>
     <p>
@@ -34,12 +36,14 @@
 {% endblock %}
 
 {% block js %}
-{% if g.websocket_url %}
+{% if g.PUSHER_APP_KEY %}
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>
-    <script type="text/javascript" src="/static/js/githug.js"></script>
+<script src="http://js.pusher.com/1.12/pusher.min.js"></script>
+<script type="text/javascript" src="/static/js/githug.js"></script>
 <script type="text/javascript">
 window.addEvent('domready', function(){
-    GitHug.realtime($('realtime'), "{{ g.websocket_url }}");
+    var loop = GitHug.realtime($('realtime'), "{{ g.PUSHER_APP_KEY }}", "{{ g.PUSHER_CHANNEL }}", "{{ g.PUSHER_EVENT }}");
+    {% for hug in preloaded_hugs %}loop.append({{ hug|safe() }});{% endfor %}
 });
 </script>
 {% endif %}

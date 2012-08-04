@@ -63,7 +63,8 @@ class User(Document):
         return 'https://github.com/%s' % self.name
 
     def can_hug(self):
-        return self.get_today_hugged() is None
+        from app import app
+        return app.debug or self.get_today_hugged() is None
 
     def hug(self, receiver):
         hug = Hug.objects.create(hugger=self, hugged=receiver)
@@ -113,6 +114,9 @@ class HugQuerySet(QuerySet):
     def hugs_last_week(self):
         last_week = datetime.date.today() - datetime.timedelta(days=7)
         return self.filter(week=get_week_number(last_week), year=get_year_number(last_week)).count()
+
+    def get_recent(self, num):
+        return self.order_by('created').limit(num)
 
 
 class Hug(Document):
