@@ -152,7 +152,7 @@ def index():
         RandomUser('github', 'ericholscher', 'Eric Holscher'),
         RandomUser('github', 'econchick', 'Lynn Root'),
     ])
-    preloaded_hugs = map(json.dumps, [hug.to_dict(True) for hug in Hug.objects.get_recent(5)])
+    preloaded_hugs = reversed(map(json.dumps, [hug.to_dict(True) for hug in Hug.objects.get_recent(5)]))
     return render_template('index.html', preloaded_hugs=preloaded_hugs, random_user=random_user, **stats)
 
 @app.route('/about/')
