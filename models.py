@@ -115,7 +115,7 @@ class HugQuerySet(QuerySet):
         return self.filter(week=get_week_number(last_week), year=get_year_number(last_week)).count()
 
     def get_recent(self, num):
-        return self.order_by('created').limit(num)
+        return self.order_by('-created').limit(num)
 
 
 class Hug(Document):
