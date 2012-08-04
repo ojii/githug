@@ -4,9 +4,11 @@
         <h1>GitHug API</h1>
         <h2>Realtime API</h2>
         <p>
-            You can get realtime information about hugs as they happen by connecting to the websocket located at
-            <code>wss://githugapi.ojii.ch/</code>. The websocket will get messages for each hug as it
-            happens. Hugs will be JSON objects looking like this:
+            You can get realtime information about hugs as they happen via <a href="http://pusher.com">Pusher</a> using
+            the Pusher API Key  <code>{{ g.PUSHER_APP_KEY }}<code> and listening to the <code>{{ g.PUSHER_EVENT }}</code>
+            event in the <code>{{ g.PUSHER_CHANNEL }}</code> channel. For more information about how to use Pusher, please
+            refer to their <a href="http://pusher.com/docs">docs</a>. The data received will be a JSON object looking
+            like this:
             <pre>
                 {
                     "created": unix timestamp,
