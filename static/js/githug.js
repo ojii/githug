@@ -32,7 +32,7 @@ GitHug.realtime = function(target, app_id, channel, event){
         new Fx.Tween(target, {
             'property': 'opacity'
         }).start(1, 0).addEvent('complete', function(){
-            target.set('text', hug.hugger.name + " hugged " + hug.hugged.name);
+            target.set('html', '<a href="' + hug.hugger.url + '">' + hug.hugger.name + '</a> hugged <a href="' + hug.hugged.url + '">' + hug.hugged.name + '</a>');
             new Fx.Tween(target, {
                'property': 'opacity'
             }).start(0, 1);
