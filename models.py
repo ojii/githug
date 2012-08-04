@@ -63,8 +63,7 @@ class User(Document):
         return 'https://github.com/%s' % self.name
 
     def can_hug(self):
-        from app import app
-        return app.debug or self.get_today_hugged() is None
+        return self.get_today_hugged() is None
 
     def hug(self, receiver):
         hug = Hug.objects.create(hugger=self, hugged=receiver)
