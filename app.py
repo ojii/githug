@@ -227,7 +227,8 @@ def hug(network, username):
         return render_template('already_hugged.html')
     if request.form.get('confirm', None) != 'confirm':
         abort(400)
-    receiver,_ = User.objects.get_or_create(name=username, network=network, avatar_url=session['avatar-url'])
+    receiver,_ = User.objects.get_or_create(name=username, network=network)
+    receiver.avatar_url = session['avatar-url']
     del session['avatar-url']
     hug = g.user.hug(receiver)
     if g.push:
