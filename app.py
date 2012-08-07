@@ -30,7 +30,7 @@ class GitHugAuth(GithubAuth):
     def build_user(self, data):
         user = super(GitHugAuth, self).build_user(data)
         user.avatar_url = data['user']['avatar_url']
-        user.email = data['user'].get('email', '')
+        user.email = data['user'].get('email', None) or None
         return user
 
 #
@@ -179,7 +179,7 @@ def prepare_to_hug():
 @github.login_required
 def save_settings():
     g.user.notifications = bool(request.form.get('notifications', False))
-    g.user.email = request.form.get('email', '') or None
+    g.user.email = request.form.get('email', None) or None
     g.user.save()
     return redirect(url_for('me'))
 
