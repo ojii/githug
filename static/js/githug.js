@@ -4,11 +4,11 @@ GitHug.Loop = new Class({
     Implements: Events,
     initialize: function(){
         this.queue = [];
-        this.timer = null;
     },
     start: function(interval){
         this.interval = interval;
-        this.timer = setInterval(this.mainloop.bind(this), this.interval);
+        this.mainloop();
+        setInterval(this.mainloop.bind(this), this.interval);
     },
     mainloop: function(){
         if (this.queue.length){
@@ -27,7 +27,6 @@ GitHug.realtime = function(target, app_id, channel, event){
     var pusher = new Pusher(app_id);
     var channel = pusher.subscribe(channel);
     var loop = new GitHug.Loop();
-    loop.start(5000);
     loop.addEvent('next', function(hug){
         new Fx.Tween(target, {
             'property': 'opacity'

@@ -44,6 +44,7 @@
 window.addEvent('domready', function(){
     var loop = GitHug.realtime($('realtime'), "{{ g.PUSHER_APP_KEY }}", "{{ g.PUSHER_CHANNEL }}", "{{ g.PUSHER_EVENT }}");
     {% for hug in preloaded_hugs %}loop.append({{ hug|safe() }});{% endfor %}
+    loop.start(3500);
 });
 </script>
 {% endif %}
