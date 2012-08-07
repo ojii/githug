@@ -111,6 +111,7 @@ def teardown_request(exception):
 def after_request(response):
     if not app.debug:
         response.headers.setdefault('Strict-Transport-Security', 'max-age=3600')
+    response.headers.setdefault('X-Frame-Options', 'DENY')
     return response
 
 @app.context_processor
