@@ -30,7 +30,7 @@ class GitHugAuth(GithubAuth):
     def build_user(self, data):
         user = super(GitHugAuth, self).build_user(data)
         user.avatar_url = data['user']['avatar_url']
-        user.email = data['user'].get('email', None) or None
+        user.email = data['user'].get('email', '').strip() or None
         return user
 
 #
@@ -181,7 +181,7 @@ def prepare_to_hug():
 @github.login_required
 def save_settings():
     g.user.notifications = bool(request.form.get('notifications', False))
-    g.user.email = request.form.get('email', None) or None
+    g.user.email = request.form.get('email', '').strip() or None
     g.user.save()
     return redirect(url_for('me'))
 
@@ -211,7 +211,7 @@ def confirm_hug(network, username):
     if network != 'github':
         abort(400)
     if not g.user.can_hug():
-        return render_template('already_hugged.html')
+        return render_template('already_hugged.html', profile_url=url_for('user', network, username))
     response = requests_session.get('https://api.github.com/users/%s' % username)
     if not response.ok:
         return redirect(url_for('me'))
